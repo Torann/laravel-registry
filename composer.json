@@ -1,0 +1,25 @@
+{
+    "name": "torann/registry",
+    "description": "Laravel 4 registry manager for application configurations",
+    "keywords": ["registry", "laravel", "settings"],
+	"license": "BSD 2-Clause",
+    "authors": [
+        {
+            "name": "Daniel Stainback",
+            "email": "daniel@lyften.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.0",
+        "illuminate/support": "4.0.x"
+    },
+    "autoload": {
+        "classmap": [
+            "src/migrations"
+        ],
+        "psr-0": {
+            "Torann\\Registry": "src/"
+        }
+    },
+    "minimum-stability": "dev"
+}
