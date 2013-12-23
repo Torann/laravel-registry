@@ -9,7 +9,7 @@ Add the following into your `composer.json` file:
 ```json
 {
 	"require": {
-		"torann\registry": "dev-master"
+		"torann/registry": "dev-master"
 	}
 }
 ```
