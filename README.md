@@ -1,6 +1,10 @@
-## Registry Manager for Laravel 4 - Alpha
+# Registry Manager for Laravel 4 - Alpha
+
+[![Latest Stable Version](https://poser.pugx.org/torann/registry/v/stable.png)](https://packagist.org/packages/torann/registry) [![Total Downloads](https://poser.pugx.org/torann/registry/downloads.png)](https://packagist.org/packages/torann/registry)
 
 Registry manager for Laravel 4. An alternative for managing application configurations and settings. Now with the magic of caching.
+
+----------
 
 ## Installation
 
