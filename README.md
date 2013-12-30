@@ -28,7 +28,7 @@ Add the service provider and alias into your `app/config/app.php`
 'Registry' => 'Torann\Registry\Facades\Registry',
 ```
 
-Run `php artisan migrate --package="torann\registry"` to install the registry table
+Run `php artisan migrate --package="torann/registry"` to install the registry table
 
 ## Usage
 
