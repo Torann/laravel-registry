@@ -255,7 +255,7 @@ class Registry {
 			{
 				$cache[$setting->key] = json_decode($setting->value, true);
 			}
-			$this->cache_storage = $cache;
+			return $cache;
 		});
 	}
 
