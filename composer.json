@@ -21,5 +21,10 @@
             "Torann\\Registry": "src/"
         }
     },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "0.1-dev"
+        }
+    },
     "minimum-stability": "dev"
 }
