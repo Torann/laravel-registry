@@ -14,14 +14,14 @@ class Registry {
 	/**
 	 * Application instance
 	 *
-	 * @var Illuminate\Foundation\Application
+	 * @var \Illuminate\Foundation\Application
 	 */
 	protected $app;
 
 	/**
 	 * Constructor
 	 *
-	 * @param Illuminate\Foundation\Application $app
+	 * @param \Illuminate\Foundation\Application $app
 	 */
 	public function __construct($app)
 	{
@@ -248,10 +248,12 @@ class Registry {
 	 */
 	protected function setCache()
 	{
-		$this->cache_storage = Cache::rememberForever("torann.registry", function()
+		$db = $this->app['db'];
+		
+		$this->cache_storage = Cache::rememberForever("torann.registry", function() use ($db)
 		{
 			$cache = array();
-			foreach($this->app['db']->table('system_registries')->get() as $setting)
+			foreach($db->table('system_registries')->get() as $setting)
 			{
 				$cache[$setting->key] = json_decode($setting->value, true);
 			}
