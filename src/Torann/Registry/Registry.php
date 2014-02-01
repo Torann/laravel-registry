@@ -201,7 +201,7 @@ class Registry {
 	 * @param  string $default
 	 * @return mixed
 	 */
-	public function all($default = null)
+	public function all($default = array())
 	{
 		return ( ! empty($this->cache_storage) ) ? $this->cache_storage : $default;
 	}
