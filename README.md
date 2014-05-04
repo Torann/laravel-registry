@@ -67,7 +67,7 @@ Registry::flush();
 Mass update
 
 ```php
-$settings = Input::get('site_name', 'company_address', 'email');
+$settings = Input::only('site_name', 'company_address', 'email');
 
 Registry::store($settings);
 ```
