@@ -12,9 +12,9 @@ Add the following into your `composer.json` file:
 
 ```json
 {
-	"require": {
-		"torann/registry": "dev-master"
-	}
+    "require": {
+        "torann/registry": "dev-master"
+    }
 }
 ```
 
@@ -22,7 +22,7 @@ Add the service provider and alias into your `app/config/app.php`
 
 ```php
 'providers' => array(
-	'Torann\Registry\RegistryServiceProvider',
+    'Torann\Registry\RegistryServiceProvider',
 ),
 
 'Registry' => 'Torann\Registry\Facades\Registry',
