@@ -71,3 +71,19 @@ $settings = Input::only('site_name', 'company_address', 'email');
 
 Registry::store($settings);
 ```
+
+## Change Log
+
+#### v0.1.2
+
+- Added config for custom table name
+- Added forced variable types 
+- Code cleanup
+
+#### v0.1.1
+
+- Bug fixes
+
+#### v0.1.0
+
+- First release

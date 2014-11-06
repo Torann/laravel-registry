@@ -30,7 +30,9 @@ class RegistryServiceProvider extends ServiceProvider {
 	{
 		$this->app['registry'] = $this->app->share(function($app)
 		{
-			return new Registry($app);
+            $config = $app->config->get('registry::config', array());
+
+			return new Registry($app['db'], $app['cache'], $config);
 		});
 	}
 
