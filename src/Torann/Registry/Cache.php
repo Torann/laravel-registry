@@ -143,11 +143,17 @@ class Cache {
      */
     public function expired()
     {
+        // Update if empty
+        if (empty($this->entries)) {
+            return true;
+        }
+
+        // Check timestamps
         if ($this->timestampManager) {
             return $this->timestampManager->check($this->getTimestamp());
         }
 
-        return true;
+        return false;
     }
 
     /**
