@@ -1,25 +1,23 @@
 <?php namespace Torann\Registry;
 
 use Exception;
-
 use Illuminate\Database\DatabaseManager;
-use Illuminate\Cache\CacheManager;
 
 class Registry {
 
     /**
-     * Registry cache
+     * Registry config
      *
-     * @var object
+     * @var array
      */
-    protected $cache_storage = null;
+    protected $config;
 
     /**
-     * Registry table name
+     * Application instance
      *
-     * @var string
+     * @var \Illuminate\Foundation\Application
      */
-    protected $table;
+    protected $app;
 
     /**
      * Database manager instance
@@ -31,21 +29,21 @@ class Registry {
     /**
      * Cache instance
      *
-     * @var \Illuminate\Cache\CacheManager
+     * @var Cache
      */
-    protected $cache;
+    public $cache;
 
     /**
      * Constructor
      *
-     * @param \Illuminate\Database\DatabaseManager $database
-     * @param \Illuminate\Cache\CacheManager       $cache
+     * @param DatabaseManager $database
+     * @param Cache           $cache
      */
-    public function __construct(DatabaseManager $database, CacheManager $cache, $config = array())
+    public function __construct(DatabaseManager $database, Cache $cache, $config = array())
     {
         $this->database = $database;
+        $this->config   = $config;
         $this->cache    = $cache;
-        $this->table    = $config['table'];
 
         // Ensure cache is set
         $this->setCache();
@@ -56,7 +54,6 @@ class Registry {
      *
      * @param  string  $key
      * @param  string  $default
-     * @param  bool    $forceType
      * @return mixed
      */
     public function get($key, $default = null)
@@ -78,15 +75,16 @@ class Registry {
     public function set($key, $value)
     {
         list($baseKey, $searchKey) = $this->fetchKey($key);
+
         $registry = $this->get($baseKey);
 
-        if ( ! is_null($registry)) return $this->overwrite($key, $value);
+        if (! is_null($registry)) return $this->overwrite($key, $value);
 
         if ($baseKey != $searchKey)
         {
             $object = array();
-            $level = '';
-            $keys = explode('.', $searchKey);
+            $level  = '';
+            $keys   = explode('.', $searchKey);
 
             foreach ($keys as $key)
             {
@@ -94,18 +92,18 @@ class Registry {
                 (trim($level, '.') == $searchKey) ? array_set($object, trim($level, '.'), $value) : array_set($object, trim($level, '.'), array());
             }
 
-            $this->database->table($this->table)->insert(array('key' => $baseKey, 'value' => json_encode($object)));
+            $this->database->table($this->config['table'])->insert(array('key' => $baseKey, 'value' => json_encode($object)));
 
-            $this->cache_storage[$baseKey] = $object;
+            // Add to cache
+            $this->cache->add($baseKey, $object);
         }
         else
         {
-            $this->database->table($this->table)->insert(array('key' => $baseKey, 'value' => json_encode($value)));
+            $this->database->table($this->config['table'])->insert(array('key' => $baseKey, 'value' => json_encode($value)));
 
-            $this->cache_storage[$baseKey] = $value;
+            // Add to cache
+            $this->cache->add($baseKey, $value);
         }
-
-        $this->cache->forever('torann.registry', $this->cache_storage);
 
         return true;
     }
@@ -128,18 +126,18 @@ class Registry {
         if ($baseKey !=  $searchKey)
         {
             array_set($registry, $searchKey, $value);
-            $this->database->table($this->table)->where('key', '=', $baseKey)->update(array('value' => json_encode($registry)));
+            $this->database->table($this->config['table'])->where('key', '=', $baseKey)->update(array('value' => json_encode($registry)));
 
-            $this->cache_storage[$baseKey] = $registry;
+            $this->cache->add($baseKey, $registry);
         }
         else
         {
-            $this->database->table($this->table)->where('key', '=', $baseKey)->update(array('value' => json_encode($value)));
+            $this->database->table($this->config['table'])->where('key', '=', $baseKey)->update(array('value' => json_encode($value)));
 
-            $this->cache_storage[$baseKey] = $value;
+            $this->cache->add($baseKey, $value);
         }
 
-        $this->cache->forever('torann.registry', $this->cache_storage);
+        //$this->cache->forever('torann.registry', $this->cache_storage);
 
         return true;
     }
@@ -165,10 +163,10 @@ class Registry {
 										ON DUPLICATE KEY UPDATE `key` = ?, `value` = ?",
                 array($key, $jsonValue, $key, $jsonValue));
 
-            $this->cache_storage[$key] = $value;
+            $this->cache->add($key, $value);
         }
 
-        $this->cache->forever('torann.registry', $this->cache_storage);
+        //$this->cache->forever('torann.registry', $this->cache_storage);
 
         return true;
     }
@@ -179,29 +177,34 @@ class Registry {
      * @param  string $key
      * @throws Exception
      * @return bool
+     * @throws Exception
      */
     public function forget($key)
     {
         list($baseKey, $searchKey) = $this->fetchKey($key);
         $registry = $this->get($baseKey);
 
-        if (is_null($registry)) throw new Exception("Item [$key] does not exists");
+        if (is_null($registry)) {
+            throw new Exception("Item [$key] does not exists");
+        }
 
         if ($baseKey !== $searchKey)
         {
             array_forget($registry, $searchKey);
-            $this->database->table($this->table)->where('key', '=', $baseKey)->update(array('value' => json_encode($registry)));
+            $this->database->table($this->config['table'])->where('key', '=', $baseKey)->update(array('value' => json_encode($registry)));
 
-            $this->cache_storage[$baseKey] = $registry;
+            // Update cache
+            $this->cache->add($baseKey, $registry);
         }
         else
         {
-            $this->database->table($this->table)->where('key', '=', $baseKey)->delete();
+            $this->database->table($this->config['table'])->where('key', '=', $baseKey)->delete();
 
-            unset($this->cache_storage[$baseKey]);
+            // Remove from cache
+            $this->cache->remove($baseKey);
         }
 
-        $this->cache->forever('torann.registry', $this->cache_storage);
+        //$this->cache->forever('torann.registry', $this->cache_storage);
 
         return true;
     }
@@ -213,11 +216,9 @@ class Registry {
      */
     public function flush()
     {
-        $this->cache->forget('torann.registry');
+        $this->cache->flush();
 
-        $this->cache_storage = null;
-
-        return $this->database->table($this->table)->truncate();
+        return $this->database->table($this->config['table'])->truncate();
     }
 
     /**
@@ -228,7 +229,7 @@ class Registry {
      */
     public function all($default = array())
     {
-        return ( ! empty($this->cache_storage) ) ? $this->cache_storage : $default;
+        return $this->cache->all($default);
     }
 
     /**
@@ -286,9 +287,11 @@ class Registry {
      */
     protected function fetchValue($key, $searchKey = null)
     {
-        if ( ! isset($this->cache_storage[$key]) ) return null;
+        $object = $this->cache->get($key);
 
-        $object = $this->cache_storage[$key];
+        if (is_null($object)) {
+            return null;
+        }
 
         return ! is_null($searchKey) ? array_get($object, $searchKey, $object) : array_get($object, $key, $object);
     }
@@ -300,19 +303,21 @@ class Registry {
      */
     protected function setCache()
     {
-        $db    = $this->database;
-        $table = $this->table;
+        // Check if cache has expired
+        if ($this->cache->expired() === false) {
+            return;
+        }
 
-        $this->cache_storage = $this->cache->rememberForever("torann.registry", function() use ($db, $table)
+        // Instantiate values
+        $values = array();
+
+        // Get values from database
+        foreach($this->database->table($this->config['table'])->get() as $setting)
         {
-            $cache = array();
+            $values[$setting->key] = json_decode($setting->value, true);
+        }
 
-            foreach($db->table($table)->get() as $setting)
-            {
-                $cache[$setting->key] = json_decode($setting->value, true);
-            }
-
-            return $cache;
-        });
+        // Cache values
+        $this->cache->set($values);
     }
 }

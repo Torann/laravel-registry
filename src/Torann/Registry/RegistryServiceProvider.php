@@ -28,13 +28,40 @@ class RegistryServiceProvider extends ServiceProvider {
 	 */
 	public function register()
 	{
-		$this->app['registry'] = $this->app->share(function($app)
-		{
+		$this->registerCache();
+		$this->registerRegistry();
+	}
+
+    /**
+     * Register the collection repository.
+     *
+     * @return void
+     */
+    protected function registerRegistry()
+    {
+        $this->app['registry'] = $this->app->share(function($app)
+        {
             $config = $app->config->get('registry::config', array());
 
-			return new Registry($app['db'], $app['cache'], $config);
-		});
-	}
+            return new Registry($app['db'], $app['registry.cache'], $config);
+        });
+    }
+
+    /**
+     * Register the collection repository.
+     *
+     * @return void
+     */
+    protected function registerCache()
+    {
+        $this->app['registry.cache'] = $this->app->share(function($app)
+        {
+            $meta = $app['config']->get('app.manifest');
+            $timestampManager = $app->config->get('registry::timestamp_manager');
+
+            return new Cache($meta, $timestampManager);
+        });
+    }
 
 	/**
 	 * Get the services provided by the provider.
