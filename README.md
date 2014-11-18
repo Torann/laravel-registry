@@ -8,6 +8,9 @@ Registry manager for Laravel. An alternative for managing application configurat
 
 ## Installation
 
+- [Registry on Packagist](https://packagist.org/packages/torann/registry)
+- [Registry on GitHub](https://github.com/Torann/laravel-registry)
+
 Add the following into your `composer.json` file:
 
 ```json
