@@ -242,7 +242,7 @@ class Registry {
     {
         if (in_array($data, array('true', 'false')))
         {
-            $data = (bool) $data;
+            $data = ($data === 'true' ? 1 : 0);
         }
         else if (is_numeric($data))
         {
