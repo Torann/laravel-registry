@@ -293,7 +293,7 @@ class Registry {
             return null;
         }
 
-        return ! is_null($searchKey) ? array_get($object, $searchKey, $object) : array_get($object, $key, $object);
+        return ! is_null($searchKey) ? array_get($object, $searchKey, null) : array_get($object, $key, null);
     }
 
     /**
