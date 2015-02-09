@@ -76,7 +76,11 @@ Registry::flush();
 **Mass update**
 
 ```php
-$settings = Input::only('site_name', 'company_address', 'email');
+$settings = array(
+    'site_name' => 'FooBar, Inc.', 
+    'address'   => '11 Bean Street', 
+    'email'     => 'foo@bar.com'
+);
 
 Registry::store($settings);
 ```
