@@ -78,7 +78,13 @@ class Registry {
 
         $registry = $this->get($baseKey);
 
-        if (! is_null($registry)) return $this->overwrite($key, $value);
+        if ($registry === null) {
+            $registry = $this->cache->get($baseKey);
+        }
+
+        if (! is_null($registry)) {
+            return $this->overwrite($key, $value);
+        }
 
         if ($baseKey != $searchKey)
         {
@@ -119,9 +125,16 @@ class Registry {
     public function overwrite($key, $value)
     {
         list($baseKey, $searchKey) = $this->fetchKey($key);
+
         $registry = $this->get($baseKey);
 
-        if (is_null($registry)) throw new Exception("Item [$key] does not exists");
+        if ($registry === null) {
+            $registry = $this->cache->get($baseKey);
+        }
+
+        if (is_null($registry)) {
+            throw new Exception("Item [$key] does not exists");
+        }
 
         if ($baseKey !=  $searchKey)
         {
@@ -182,7 +195,12 @@ class Registry {
     public function forget($key)
     {
         list($baseKey, $searchKey) = $this->fetchKey($key);
+
         $registry = $this->get($baseKey);
+
+        if ($registry === null) {
+            $registry = $this->cache->get($baseKey);
+        }
 
         if (is_null($registry)) {
             throw new Exception("Item [$key] does not exists");
