@@ -18,7 +18,15 @@ class RegistryServiceProvider extends ServiceProvider {
 	 */
 	public function boot()
 	{
-		$this->package('torann/registry');
+		$this->mergeConfigFrom(
+		    __DIR__ . '/../../config/config.php', 'registry'
+		);
+		$this->publishes([
+		    __DIR__ . '/../../config/config.php', config_path('registry.php')
+		], 'config');
+		$this->publishes([
+		    __DIR__ . '/../../migrations/' => base_path('/database/migrations')
+		], 'migrations');
 	}
 
 	/**
@@ -41,7 +49,7 @@ class RegistryServiceProvider extends ServiceProvider {
     {
         $this->app['registry'] = $this->app->share(function($app)
         {
-            $config = $app->config->get('registry::config', array());
+            $config = $app->config->get('registry', array());
 
             return new Registry($app['db'], $app['registry.cache'], $config);
         });
@@ -56,8 +64,8 @@ class RegistryServiceProvider extends ServiceProvider {
     {
         $this->app['registry.cache'] = $this->app->share(function($app)
         {
-            $meta = $app['config']->get('app.manifest');
-            $timestampManager = $app->config->get('registry::timestamp_manager');
+            $meta = $app->config->get('registry.cache_path');
+            $timestampManager = $app->config->get('registry.timestamp_manager');
 
             return new Cache($meta, $timestampManager);
         });

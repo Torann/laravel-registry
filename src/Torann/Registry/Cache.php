@@ -33,12 +33,12 @@ class Cache {
     /**
      * Create a new instance.
      *
-     * @param  string $manifestPath
+     * @param  string $cachePath
      * @param  string $timestampManager
      */
-    public function __construct($manifestPath, $timestampManager)
+    public function __construct($cachePath, $timestampManager)
     {
-        $this->path = $manifestPath.DIRECTORY_SEPARATOR.'torann_registry.json';
+        $this->path = $cachePath.DIRECTORY_SEPARATOR.'torann_registry.json';
 
         // Instantiate timestamp manager
         if (class_exists($timestampManager)) {
