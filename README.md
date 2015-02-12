@@ -11,85 +11,51 @@ Registry manager for Laravel. An alternative for managing application configurat
 - [Registry on Packagist](https://packagist.org/packages/torann/registry)
 - [Registry on GitHub](https://github.com/Torann/laravel-registry)
 
-Add the following into your `composer.json` file:
+To get the latest version of Registry simply require it in your `composer.json` file.
 
-```json
-{
-    "require": {
-        "torann/registry": "0.1.*@dev"
-    }
-}
-```
+~~~
+"torann/registry": "0.1.*@dev"
+~~~
 
-Add the service provider and alias into your `app/config/app.php`
+You'll then need to run `composer install` to download it and have the autoloader updated.
+
+Once Registry is installed you need to register the service provider with the application. Open up `app/config/app.php` and find the `providers` key.
 
 ```php
 'providers' => array(
     'Torann\Registry\RegistryServiceProvider',
-),
-
-'Registry' => 'Torann\Registry\Facades\Registry',
+)
 ```
 
-Create configuration file using artisan
-
-```
-php artisan config:publish torann/registry
-```
-
-Run `php artisan migrate --package="torann/registry"` to install the registry table
-
-## Usage
-
-**Retrieve an item from the registry**
+Registry also ships with a facade which provides the static syntax for creating collections. You can register the facade in the aliases key of your `app/config/app.php` file.
 
 ```php
-Registry::get('foo'); \\will return null if key does not exists
-Registry::get('foo.bar'); \\will return null if key does not exists
-
-Registry::get('foo', 'undefined') \\will return undefined if key does not exists
+'aliases' => array(
+    'Registry' => 'Torann\Registry\Facades\Registry',
+)
 ```
 
-**Store item into registry**
+### Publish the config
 
-```php
-Registry::set('foo', 'bar');
-Registry::set('foo', array('bar' => 'foobar'));
+Run this on the command line from the root of your project:
 
-Registry::get('foo'); \\bar
-Registry::get('foo.bar'); \\foobar
-```
+~~~
+$ php artisan config:publish torann/registry
+~~~
 
-**Remove item from registry**
+This will publish Moderate's config to ``app/config/packages/torann/moderate/``.
 
-```php
-Registry::forget('foo');
-Registry::forget('foo.bar');
-```
+### Migration
 
-**Flush registry**
+Run this on the command line from the root of your project:
 
-```php
-Registry::flush();
-```
+~~~
+$ php artisan migrate --package="torann/registry"
+~~~
 
-**Mass update**
+## Documentation
 
-```php
-$settings = array(
-    'site_name' => 'FooBar, Inc.', 
-    'address'   => '11 Bean Street', 
-    'email'     => 'foo@bar.com'
-);
-
-Registry::store($settings);
-```
-
-## Custom Timestamp Managers
-
-For instance when multiple web servers are sharing a database we need to ensure the settings are all in sync. To accomplish this we use timestamp managers. The master timestamp is held in **Redis** and compared against the cached registry's timestamp, if the cached version is expired the system reloads the registry from the database and caches them.
-
-To write a custom timestamp manager implement `Torann\Registry\Timestamps\TimestampInterface` and include your class in the registry settings `timestamp_manager`.
+[View the official documentation](http://lyften.com/projects/laravel-registry/).
 
 ## Change Log
 
