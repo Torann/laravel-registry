@@ -35,23 +35,15 @@ Registry also ships with a facade which provides the static syntax for creating 
 )
 ```
 
-### Publish the config
+### Publish the configurations and migration
 
 Run this on the command line from the root of your project:
 
 ~~~
-$ php artisan config:publish torann/registry
+$ php artisan vendor:publish
 ~~~
 
-This will publish Moderate's config to ``app/config/packages/torann/moderate/``.
-
-### Migration
-
-Run this on the command line from the root of your project:
-
-~~~
-$ php artisan migrate --package="torann/registry"
-~~~
+A configuration file will be publish to `config/registry.php` and a migration file to `database/migrations/`
 
 ## Documentation
 

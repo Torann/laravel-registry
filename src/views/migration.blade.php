@@ -1,5 +1,6 @@
-<?php
+<?php echo '<?php' ?>
 
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
 class CreateSystemRegistriesTable extends Migration {
@@ -11,7 +12,7 @@ class CreateSystemRegistriesTable extends Migration {
      */
     public function up()
     {
-        Schema::create('system_registries', function($table)
+        Schema::create(\Config::get('registry.table'), function(Blueprint $table)
         {
             $table->string('key');
             $table->text('value');
@@ -27,7 +28,7 @@ class CreateSystemRegistriesTable extends Migration {
      */
     public function down()
     {
-        Schema::drop('system_registries');
+        Schema::drop(\Config::get('registry.table'));
     }
 
 }
