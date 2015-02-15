@@ -2,7 +2,7 @@
 
 [![Latest Stable Version](https://poser.pugx.org/torann/registry/v/stable.png)](https://packagist.org/packages/torann/registry) [![Total Downloads](https://poser.pugx.org/torann/registry/downloads.png)](https://packagist.org/packages/torann/registry)
 
-Registry manager for Laravel. An alternative for managing application configurations and settings. Now with the magic of caching, so no more database calls to simply get site setting.
+Registry manager for Laravel 5. An alternative for managing application configurations and settings. Now with the magic of caching, so no more database calls to simply get site setting.
 
 ----------
 
@@ -10,11 +10,12 @@ Registry manager for Laravel. An alternative for managing application configurat
 
 - [Registry on Packagist](https://packagist.org/packages/torann/registry)
 - [Registry on GitHub](https://github.com/Torann/laravel-registry)
+- [Laravel 4 Installation](http://lyften.com/projects/laravel-registry/doc/laravel-4.html)
 
 To get the latest version of Registry simply require it in your `composer.json` file.
 
 ~~~
-"torann/registry": "0.1.*@dev"
+"torann/registry": "0.2.*@dev"
 ~~~
 
 You'll then need to run `composer install` to download it and have the autoloader updated.
@@ -50,6 +51,10 @@ A configuration file will be publish to `config/registry.php` and a migration fi
 [View the official documentation](http://lyften.com/projects/laravel-registry/).
 
 ## Change Log
+
+#### v0.2.0
+
+- Update to Laravel 5
 
 #### v0.1.3
 
