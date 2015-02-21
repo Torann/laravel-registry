@@ -28,7 +28,7 @@ Once Registry is installed you need to register the service provider with the ap
 )
 ```
 
-Registry also ships with a facade which provides the static syntax for creating collections. You can register the facade in the aliases key of your `app/config/app.php` file.
+Registry also ships with a facade which provides the static syntax for creating collections. You can register the facade in the aliases key of your `app/app.php` file.
 
 ```php
 'aliases' => array(
