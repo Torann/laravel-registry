@@ -20,7 +20,7 @@ To get the latest version of Registry simply require it in your `composer.json` 
 
 You'll then need to run `composer install` to download it and have the autoloader updated.
 
-Once Registry is installed you need to register the service provider with the application. Open up `app/config/app.php` and find the `providers` key.
+Once Registry is installed you need to register the service provider with the application. Open up `app/app.php` and find the `providers` key.
 
 ```php
 'providers' => array(
@@ -64,7 +64,7 @@ A configuration file will be publish to `config/registry.php` and a migration fi
 #### v0.1.2
 
 - Added config for custom table name
-- Added forced variable types 
+- Added forced variable types
 - Code cleanup
 
 #### v0.1.1
