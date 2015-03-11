@@ -36,5 +36,5 @@ return array(
     |
     */
 
-    'cache_path' => storage_path(),
+    'cache_path' => storage_path().'/app',
 );
