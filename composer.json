@@ -15,7 +15,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Torann\\Registry\\": "src/Torann/Registry"
+            "CompareAsiaGroup\\Registry\\": "src/CompareAsiaGroup/Registry"
         }
     },
     "extra": {

@@ -1,4 +1,4 @@
-<?php namespace Torann\Registry\Timestamps;
+<?php namespace CompareAsiaGroup\Registry\Timestamps;
 
 interface TimestampInterface {
 

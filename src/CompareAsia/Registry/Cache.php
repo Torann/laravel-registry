@@ -1,4 +1,4 @@
-<?php namespace Torann\Registry;
+<?php namespace CompareAsiaGroup\Registry;
 
 class Cache {
 
@@ -7,12 +7,12 @@ class Cache {
      *
      * @var string
      */
-    protected $timestampKey = 'TorannRegistryTimeStamp';
+    protected $timestampKey = 'CompareAsiaGroupRegistryTimeStamp';
 
     /**
      * Timestamp Manager
      *
-     * @var null|\Torann\Registry\Timestamps\TimestampInterface
+     * @var null|\CompareAsiaGroup\Registry\Timestamps\TimestampInterface
      */
     protected $timestampManager;
 

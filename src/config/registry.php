@@ -21,7 +21,7 @@ return array(
     | Used for multi-instance web servers. This can be used to ensure
     | the registry for all instances are kept up to date.
     |
-    | For Redis: \\Torann\\Registry\\Timestamps\\Redis
+    | For Redis: \\CompareAsiaGroup\\Registry\\Timestamps\\Redis
     |
     */
 

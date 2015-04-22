@@ -1,4 +1,4 @@
-<?php namespace Torann\Registry\Timestamps;
+<?php namespace CompareAsiaGroup\Registry\Timestamps;
 
 use Illuminate\Support\Facades\Redis as Timestamp;
 
