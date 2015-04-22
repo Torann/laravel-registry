@@ -1,6 +1,6 @@
 <?php namespace CompareAsiaGroup\Registry;
 
-use Illuminate\Filesystem\Filesystem
+use Illuminate\Filesystem\Filesystem;
 
 class Registry {
 
