@@ -44,10 +44,15 @@ class Registry {
      */
     public function init()
     {
-        $files = $this->filesystem->files($this->config['locale']);
-        foreach ($files as $file) {
-            $filename = pathinfo("./".$file, PATHINFO_FILENAME);
-            $this->registryparent[$filename] = json_decode($file->get(), true);
+        foreach($this->config['locales'] as $locale) {
+
+            $files = $this->filesystem->files($locale);
+
+            foreach ($files as $file) {
+                $filename = pathinfo("./".$file, PATHINFO_FILENAME);
+                $this->registryparent[$locale][$filename] = json_decode($file->get(), true);
+            }
+
         }
         return true;
     }
@@ -55,18 +60,19 @@ class Registry {
     /**
      * Get value from registry
      *
+     * @param  string  $locale
      * @param  string  $component
      * @param  string  $key
      * @return mixed
      */
-    public function get($component, $key)
+    public function get($locale, $component, $key)
     {
         $value = null;
 
-        if (array_key_exists($component, $this->registryparent))
+        if (array_key_exists($component, $this->registryparent[$locale]))
         {
-            if (array_key_exists($key, $this->registryparent[$component])) {
-                $value = $this->registryparent[$component][$key];
+            if (array_key_exists($key, $this->registryparent[$locale][$component])) {
+                $value = $this->registryparent[$locale][$component][$key];
             }
         }
 
@@ -76,22 +82,23 @@ class Registry {
     /**
      * Store value into registry
      *
+     * @param  string locale
      * @param  string $component
      * @param  string $key
      * @param  mixed $value
      * @return bool
      */
-    public function set($component, $key, $value)
+    public function set($locale, $component, $key, $value)
     {
-        if (!array_key_exists($component, $this->registryparent)) {
-            $this->registryparent[$component] = array();
+        if (!array_key_exists($component, $this->registryparent[$locale])) {
+            $this->registryparent[$locale][$component] = array();
         }
 
-        if(!array_key_exists($key, $this->registryparent[$component])) {
-            $this->registryparent[$component][$key] = $value;
+        if(!array_key_exists($key, $this->registryparent[$locale][$component])) {
+            $this->registryparent[$locale][$component][$key] = $value;
         } else {
-            if ($this->registryparent[$component][$key] !== $value) {
-                $this->registryparent[$component][$key] = $value;
+            if ($this->registryparent[$locale][$component][$key] !== $value) {
+                $this->registryparent[$locale][$component][$key] = $value;
             }
         }
 
@@ -102,15 +109,16 @@ class Registry {
     /**
      * Overwrite existing value from registry
      *
+     * @param  string $locale
      * @param  string $component
      * @param  string $key
      * @param  mixed $value
      * @return bool
      */
-    public function overwrite($component, $key, $value)
+    public function overwrite($locale, $component, $key, $value)
     {
 
-        $this->registryparent[$component][$key] = $value;
+        $this->registryparent[$locale][$component][$key] = $value;
 
         return true;
     }
@@ -121,26 +129,27 @@ class Registry {
      * @param  string $component
      * @return bool
      */
-    public function store($component)
+    public function store($locale, $component)
     {
         // @TODO write config component to file.
-        $this->filesystem->put($component.".json", json_encode($this->registryparent[$component]));
+        $this->filesystem->put($locale."/".$component.".json", json_encode($this->registryparent[$locale][$component]));
     }
 
     /**
      * Remove existing value from registry
      *
+     * @param  string $locale
      * @param  string $component
      * @param  string $key
      * @return bool
      */
-    public function forget($component, $key = null)
+    public function forget($locale, $component, $key = null)
     {
         if ($key != null) {
-            unset($this->registryparent[$component]);
+            unset($this->registryparent[$locale][$component]);
 
         } else {
-            unset($this->registryparent[$component][$key]);
+            unset($this->registryparent[$locale][$component][$key]);
         }
     }
 
@@ -150,9 +159,9 @@ class Registry {
      */
     public function flush()
     {
-        foreach ($this->registryparent as $component)
+        foreach ($this->registryparent as $locale)
         {
-            unset($this->registryparent[$component]);
+            unset($this->registryparent[$locale]);
         }
 
         $this->init();
@@ -161,18 +170,19 @@ class Registry {
     /**
      * Fetch all values
      *
-     * @param  mixed $component
+     * @param  string $locale
+     * @param  string $component
      * @return mixed
      */
-    public function all($component = null)
+    public function all($locale, $component = null)
     {
         if ($component === null)
         {
-            return $this->registryparent;
+            return $this->registryparent[$locale];
         }
         else
         {
-            return $this->registryparent[$component];
+            return $this->registryparent[$locale][$component];
         }
     }
 }
