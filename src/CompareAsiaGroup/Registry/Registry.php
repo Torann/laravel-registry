@@ -150,8 +150,6 @@ class Registry {
             $this->cache->add($baseKey, $value);
         }
 
-        //$this->cache->forever('torann.registry', $this->cache_storage);
-
         return true;
     }
 
@@ -178,8 +176,6 @@ class Registry {
 
             $this->cache->add($key, $value);
         }
-
-        //$this->cache->forever('torann.registry', $this->cache_storage);
 
         return true;
     }
@@ -221,8 +217,6 @@ class Registry {
             // Remove from cache
             $this->cache->remove($baseKey);
         }
-
-        //$this->cache->forever('torann.registry', $this->cache_storage);
 
         return true;
     }

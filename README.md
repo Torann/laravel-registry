@@ -1,7 +1,5 @@
 # Registry Manager for Laravel
 
-[![Latest Stable Version](https://poser.pugx.org/torann/registry/v/stable.png)](https://packagist.org/packages/torann/registry) [![Total Downloads](https://poser.pugx.org/torann/registry/downloads.png)](https://packagist.org/packages/torann/registry)
-
 Registry manager for Laravel 5. An alternative for managing application configurations and settings. Now with the magic of caching, so no more database calls to simply get site setting.
 
 ----------

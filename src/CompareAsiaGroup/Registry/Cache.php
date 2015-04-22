@@ -38,7 +38,7 @@ class Cache {
      */
     public function __construct($cachePath, $timestampManager)
     {
-        $this->path = $cachePath.DIRECTORY_SEPARATOR.'torann_registry.json';
+        $this->path = $cachePath.DIRECTORY_SEPARATOR.'compareasiagroup_registry.json';
 
         // Instantiate timestamp manager
         if (class_exists($timestampManager)) {
