@@ -4,7 +4,7 @@ use Illuminate\Filesystem\Filesystem;
 
 class Registry {
 
-     /**
+    /**
      * Filesystem manager instance
      *
      * @var \Illuminate\Filesystem\Filesystem
@@ -32,7 +32,7 @@ class Registry {
      */
     public function __construct($config = array())
     {
-        $this->filesystem = Storage::disk('registry');
+        $this->filesystem = new Filesystem();
         $this->registryparent = array();
         $this->config = $config;
         $this->init();
@@ -46,11 +46,10 @@ class Registry {
     {
         foreach($this->config['locales'] as $locale) {
 
-            $files = $this->filesystem->files($locale);
-
-            foreach ($files as $file) {
-                $filename = pathinfo("./".$file, PATHINFO_FILENAME);
-                $this->registryparent[$locale][$filename] = json_decode($file->get(), true);
+            $files = $this->filesystem->files(storage_path().'/app/locales/'.$locale);
+            foreach ($files as $filename) {
+                $component = pathinfo($filename, PATHINFO_FILENAME);
+                $this->registryparent[$locale][$component] = json_decode($this->filesystem->get($filename), true);
             }
 
         }
