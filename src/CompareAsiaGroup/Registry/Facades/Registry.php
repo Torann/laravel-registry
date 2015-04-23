@@ -1,4 +1,4 @@
-<?php namespace Torann\Registry\Facades;
+<?php namespace CompareAsiaGroup\Registry\Facades;
 
 use Illuminate\Support\Facades\Facade;
 

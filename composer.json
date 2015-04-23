@@ -1,12 +1,12 @@
 {
-    "name": "torann/registry",
+    "name": "compareasiagroup/registry",
     "description": "Laravel registry manager for application configurations",
     "keywords": ["registry", "laravel", "settings", "configuration"],
 	"license": "BSD 2-Clause",
     "authors": [
         {
-            "name": "Daniel Stainback",
-            "email": "daniel@lyften.com"
+            "name": "CompareAsiaGroup",
+            "email": "engineering@compareasiagroup.com"
         }
     ],
     "require": {
@@ -15,7 +15,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Torann\\Registry\\": "src/Torann/Registry"
+            "CompareAsiaGroup\\Registry\\": "src/CompareAsiaGroup/Registry"
         }
     },
     "extra": {
