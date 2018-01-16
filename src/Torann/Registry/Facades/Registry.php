@@ -1,21 +1,18 @@
 <?php namespace Torann\Registry\Facades;
 
 use Illuminate\Support\Facades\Facade;
-use Illuminate\Database\DatabaseManager;
-use Torann\Registry\Cache;
 
 /**
  * The facade for @see \Torann\Registry\Registry
  * @property $cache
  *
- * @method __construct(DatabaseManager $database, Cache $cache, $config = array())
- * @method get($key, $default = null)
- * @method set($key, $value)
- * @method overwrite($key, $value)
- * @method store(array $values)
- * @method forget($key)
- * @method flush()
- * @method all($default = array())
+ * @method static get($key, $default = null)
+ * @method static set($key, $value)
+ * @method static overwrite($key, $value)
+ * @method static store(array $values)
+ * @method static forget($key)
+ * @method static flush()
+ * @method static all($default = array())
  */
 class Registry extends Facade {
 
