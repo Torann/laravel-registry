@@ -46,7 +46,7 @@ class RegistryServiceProvider extends ServiceProvider {
      */
     protected function registerRegistry()
     {
-        $this->app['registry'] = $this->app->share(function($app)
+        $this->app->singleton('registry', function($app)
         {
             $config = $app->config->get('registry', array());
 
