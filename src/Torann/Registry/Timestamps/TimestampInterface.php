@@ -1,11 +1,13 @@
-<?php namespace Torann\Registry\Timestamps;
+<?php
+namespace Torann\Registry\Timestamps;
 
-interface TimestampInterface {
+interface TimestampInterface
+{
 
     /**
      * Check for expired cache timestamp
      *
-     * @param  string $cached_at
+     * @param string $cached_at
      * @return bool
      */
     public function check($cached_at);
@@ -13,7 +15,7 @@ interface TimestampInterface {
     /**
      * Update timestamp.
      *
-     * @param  string $cached_at
+     * @param string $cached_at
      * @return bool
      */
     public function update($cached_at);

@@ -1,13 +1,15 @@
-<?php namespace Torann\Registry\Timestamps;
+<?php
+namespace Torann\Registry\Timestamps;
 
 use Illuminate\Support\Facades\Redis as Timestamp;
 
-class Redis implements TimestampInterface {
+class Redis implements TimestampInterface
+{
 
     /**
      * Check for expired cache timestamp
      *
-     * @param  string $cached_at
+     * @param string $cached_at
      * @return bool
      */
     public function check($cached_at)
@@ -20,7 +22,7 @@ class Redis implements TimestampInterface {
     /**
      * Update timestamp.
      *
-     * @param  string $cached_at
+     * @param string $cached_at
      * @return bool
      */
     public function update($cached_at)
