@@ -4,6 +4,7 @@ namespace Torann\Registry;
 use Exception;
 use Illuminate\Database\DatabaseManager;
 use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Config;
 
 class Registry
 {
@@ -180,7 +181,7 @@ class Registry
 
             // Update
             $this->database->statement(
-                'INSERT INTO system_registries ( `key`, `value` ) VALUES ( ?, ? ) ON DUPLICATE KEY UPDATE `key` = ?, `value` = ?',
+                'INSERT INTO ' . Config::get('registry.table', 'system_registries') . ' ( `key`, `value` ) VALUES ( ?, ? ) ON DUPLICATE KEY UPDATE `key` = ?, `value` = ?',
                 array($key, $jsonValue, $key, $jsonValue)
             );
 
