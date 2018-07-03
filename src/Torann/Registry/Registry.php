@@ -1,9 +1,13 @@
-<?php namespace Torann\Registry;
+<?php
+namespace Torann\Registry;
 
 use Exception;
 use Illuminate\Database\DatabaseManager;
+use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Config;
 
-class Registry {
+class Registry
+{
 
     /**
      * Registry config
@@ -15,14 +19,14 @@ class Registry {
     /**
      * Application instance
      *
-     * @var \Illuminate\Foundation\Application
+     * @var Application
      */
     protected $app;
 
     /**
      * Database manager instance
      *
-     * @var \Illuminate\Database\DatabaseManager
+     * @var DatabaseManager
      */
     protected $database;
 
@@ -34,16 +38,17 @@ class Registry {
     public $cache;
 
     /**
-     * Constructor
+     * Registry constructor.
      *
      * @param DatabaseManager $database
-     * @param Cache           $cache
+     * @param Cache $cache
+     * @param array $config
      */
     public function __construct(DatabaseManager $database, Cache $cache, $config = array())
     {
         $this->database = $database;
-        $this->config   = $config;
-        $this->cache    = $cache;
+        $this->cache = $cache;
+        $this->config = $config;
 
         // Ensure cache is set
         $this->setCache();
@@ -52,8 +57,8 @@ class Registry {
     /**
      * Get value from registry
      *
-     * @param  string  $key
-     * @param  string  $default
+     * @param  string $key
+     * @param  string $default
      * @return mixed
      */
     public function get($key, $default = null)
@@ -62,15 +67,16 @@ class Registry {
 
         $value = $this->fetchValue($baseKey, $searchKey);
 
-        return (! is_null($value)) ? $value : $default;
+        return $value !== null ? $value : $default;
     }
 
     /**
      * Store value into registry
      *
-     * @param  string $key
-     * @param  mixed $value
+     * @param $key
+     * @param $value
      * @return bool
+     * @throws Exception
      */
     public function set($key, $value)
     {
@@ -82,30 +88,34 @@ class Registry {
             $registry = $this->cache->get($baseKey);
         }
 
-        if (! is_null($registry)) {
+        if ($registry !== null) {
             return $this->overwrite($key, $value);
         }
 
-        if ($baseKey != $searchKey)
-        {
+        if ($searchKey !== null && $baseKey !== $searchKey) {
             $object = array();
-            $level  = '';
-            $keys   = explode('.', $searchKey);
+            $level = '';
+            $subKeys = explode('.', $searchKey);
 
-            foreach ($keys as $key)
-            {
-                $level .= '.'.$key;
-                (trim($level, '.') == $searchKey) ? array_set($object, trim($level, '.'), $value) : array_set($object, trim($level, '.'), array());
+            foreach ($subKeys as $subKey) {
+                $level .= '.' . $subKey;
+                trim($level, '.') === $searchKey ?
+                    array_set($object, trim($level, '.'), $value) :
+                    array_set($object, trim($level, '.'), array());
             }
 
-            $this->database->table($this->config['table'])->insert(array('key' => $baseKey, 'value' => json_encode($object)));
+            $this->database->table($this->config['table'])->insert(array(
+                'key' => $baseKey,
+                'value' => json_encode($object)
+            ));
 
             // Add to cache
             $this->cache->add($baseKey, $object);
-        }
-        else
-        {
-            $this->database->table($this->config['table'])->insert(array('key' => $baseKey, 'value' => json_encode($value)));
+        } else {
+            $this->database->table($this->config['table'])->insert(array(
+                'key' => $baseKey,
+                'value' => json_encode($value)
+            ));
 
             // Add to cache
             $this->cache->add($baseKey, $value);
@@ -117,10 +127,10 @@ class Registry {
     /**
      * Overwrite existing value from registry
      *
-     * @param  string $key
-     * @param  mixed $value
-     * @throws Exception
+     * @param string $key
+     * @param mixed $value
      * @return bool
+     * @throws Exception
      */
     public function overwrite($key, $value)
     {
@@ -132,20 +142,19 @@ class Registry {
             $registry = $this->cache->get($baseKey);
         }
 
-        if (is_null($registry)) {
+        if ($registry === null) {
             throw new Exception("Item [$key] does not exists");
         }
 
-        if ($baseKey !=  $searchKey)
-        {
+        if ($baseKey != $searchKey) {
             array_set($registry, $searchKey, $value);
-            $this->database->table($this->config['table'])->where('key', '=', $baseKey)->update(array('value' => json_encode($registry)));
+            $this->database->table($this->config['table'])->where('key', '=',
+                $baseKey)->update(array('value' => json_encode($registry)));
 
             $this->cache->add($baseKey, $registry);
-        }
-        else
-        {
-            $this->database->table($this->config['table'])->where('key', '=', $baseKey)->update(array('value' => json_encode($value)));
+        } else {
+            $this->database->table($this->config['table'])->where('key', '=',
+                $baseKey)->update(array('value' => json_encode($value)));
 
             $this->cache->add($baseKey, $value);
         }
@@ -158,13 +167,12 @@ class Registry {
     /**
      * Store an array
      *
-     * @param  array $values
+     * @param array $values
      * @return bool
      */
     public function store(array $values)
     {
-        foreach ($values as $key=>$value)
-        {
+        foreach ($values as $key => $value) {
             // Ensure proper type
             $value = $this->forceTypes($value);
 
@@ -172,9 +180,10 @@ class Registry {
             $jsonValue = json_encode($value);
 
             // Update
-            $this->database->statement("INSERT INTO system_registries ( `key`, `value` ) VALUES ( ?, ? )
-										ON DUPLICATE KEY UPDATE `key` = ?, `value` = ?",
-                array($key, $jsonValue, $key, $jsonValue));
+            $this->database->statement(
+                'INSERT INTO ' . Config::get('registry.table', 'system_registries') . ' ( `key`, `value` ) VALUES ( ?, ? ) ON DUPLICATE KEY UPDATE `key` = ?, `value` = ?',
+                array($key, $jsonValue, $key, $jsonValue)
+            );
 
             $this->cache->add($key, $value);
         }
@@ -187,7 +196,7 @@ class Registry {
     /**
      * Remove existing value from registry
      *
-     * @param  string $key
+     * @param string $key
      * @throws Exception
      * @return bool
      * @throws Exception
@@ -202,20 +211,18 @@ class Registry {
             $registry = $this->cache->get($baseKey);
         }
 
-        if (is_null($registry)) {
+        if ($registry === null) {
             throw new Exception("Item [$key] does not exists");
         }
 
-        if ($baseKey !== $searchKey)
-        {
+        if ($baseKey !== $searchKey) {
             array_forget($registry, $searchKey);
-            $this->database->table($this->config['table'])->where('key', '=', $baseKey)->update(array('value' => json_encode($registry)));
+            $this->database->table($this->config['table'])->where('key', '=',
+                $baseKey)->update(array('value' => json_encode($registry)));
 
             // Update cache
             $this->cache->add($baseKey, $registry);
-        }
-        else
-        {
+        } else {
             $this->database->table($this->config['table'])->where('key', '=', $baseKey)->delete();
 
             // Remove from cache
@@ -253,24 +260,22 @@ class Registry {
     /**
      * Cast values to native PHP variable types.
      *
-     * @param  mixed  $data
+     * @param mixed $data
      * @return mixed
      */
     protected function forceTypes($data)
     {
-        if (in_array($data, array('true', 'false')))
-        {
+        if (in_array($data, array('true', 'false'))) {
             $data = ($data === 'true' ? 1 : 0);
-        }
-        else if (is_numeric($data))
-        {
-            $data = (int) $data;
-        }
-        else if (gettype($data) === 'array')
-        {
-            foreach($data as $key=>$value)
-            {
-                $data[$key] = $this->forceTypes($value);
+        } else {
+            if (is_numeric($data)) {
+                $data = (int)$data;
+            } else {
+                if (is_array($data)) {
+                    foreach ($data as $key => $value) {
+                        $data[$key] = $this->forceTypes($value);
+                    }
+                }
             }
         }
 
@@ -280,13 +285,12 @@ class Registry {
     /**
      * Get registry key
      *
-     * @param  string $key
+     * @param string $key
      * @return array
      */
     protected function fetchKey($key)
     {
-        if (str_contains($key, '.'))
-        {
+        if (str_contains($key, '.')) {
             $keys = explode('.', $key);
             $search = array_except($keys, 0);
 
@@ -299,15 +303,15 @@ class Registry {
     /**
      * Get key value
      *
-     * @param  string $key
-     * @param  string $searchKey
+     * @param string $key
+     * @param string $searchKey
      * @return mixed
      */
     protected function fetchValue($key, $searchKey = null)
     {
         $object = $this->cache->get($key);
 
-        if (is_null($object)) {
+        if ($object === null) {
             return null;
         }
 
@@ -316,8 +320,6 @@ class Registry {
 
     /**
      * Set cache
-     *
-     * @return array
      */
     protected function setCache()
     {
@@ -330,8 +332,7 @@ class Registry {
         $values = array();
 
         // Get values from database
-        foreach($this->database->table($this->config['table'])->get() as $setting)
-        {
+        foreach ($this->database->table($this->config['table'])->get() as $setting) {
             $values[$setting->key] = json_decode($setting->value, true);
         }
 

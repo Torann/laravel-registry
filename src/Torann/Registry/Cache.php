@@ -1,6 +1,8 @@
-<?php namespace Torann\Registry;
+<?php
+namespace Torann\Registry;
 
-class Cache {
+class Cache
+{
 
     /**
      * Timestamp key.
@@ -33,12 +35,12 @@ class Cache {
     /**
      * Create a new instance.
      *
-     * @param  string $cachePath
-     * @param  string $timestampManager
+     * @param string $cachePath
+     * @param string $timestampManager
      */
     public function __construct($cachePath, $timestampManager)
     {
-        $this->path = $cachePath.DIRECTORY_SEPARATOR.'torann_registry.json';
+        $this->path = $cachePath . DIRECTORY_SEPARATOR . 'torann_registry.json';
 
         // Instantiate timestamp manager
         if (class_exists($timestampManager)) {
@@ -54,19 +56,19 @@ class Cache {
     /**
      * Get a all cached values.
      *
-     * @param  mixed $default
+     * @param mixed $default
      * @return mixed
      */
     public function all($default = array())
     {
-        return (! empty($this->entries) ) ? $this->entries : $default;
+        return (!empty($this->entries)) ? $this->entries : $default;
     }
 
     /**
      * Get a key's value from the cache.
      *
-     * @param  string  $key
-     * @param  mixed   $default
+     * @param string $key
+     * @param mixed $default
      * @return mixed
      */
     public function get($key = null, $default = null)
@@ -77,8 +79,8 @@ class Cache {
     /**
      * Add a key's value to the cache.
      *
-     * @param  string  $key
-     * @param  string  $value
+     * @param string $key
+     * @param string $value
      * @return bool
      */
     public function add($key, $value)
@@ -91,7 +93,7 @@ class Cache {
     /**
      * Set value to the cache.
      *
-     * @param  array  $value
+     * @param array $value
      * @return bool
      */
     public function set(array $value)
@@ -104,7 +106,7 @@ class Cache {
     /**
      * Remove a key from cache.
      *
-     * @param  string  $key
+     * @param string $key
      * @return bool
      */
     public function remove($key)
@@ -174,6 +176,6 @@ class Cache {
             $this->timestampManager->update($updated);
         }
 
-        return (bool) file_put_contents($this->path, json_encode($this->entries));
+        return (bool)file_put_contents($this->path, json_encode($this->entries));
     }
 }
