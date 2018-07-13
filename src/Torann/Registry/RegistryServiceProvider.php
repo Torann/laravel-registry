@@ -46,7 +46,7 @@ class RegistryServiceProvider extends ServiceProvider {
      */
     protected function registerRegistry()
     {
-        $this->app['registry'] = $this->app->share(function($app)
+        $this->app->singleton('registry', function($app)
         {
             $config = $app->config->get('registry', array());
 
@@ -61,7 +61,7 @@ class RegistryServiceProvider extends ServiceProvider {
      */
     protected function registerCache()
     {
-        $this->app['registry.cache'] = $this->app->share(function($app)
+        $this->app->singleton('registry.cache', function ($app)
         {
             $meta = $app->config->get('registry.cache_path');
             $timestampManager = $app->config->get('registry.timestamp_manager');
