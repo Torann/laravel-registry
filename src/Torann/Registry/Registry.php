@@ -90,12 +90,17 @@ class Registry {
         {
             $object = array();
             $level  = '';
-            $keys   = explode('.', $searchKey);
+            
+            // If search key is null then when we explode it it give array [ 0 => ''] which cause problem
+            if (!is_null($searchKey)) {
+                $keys = explode('.', $searchKey);
 
-            foreach ($keys as $key)
-            {
-                $level .= '.'.$key;
-                (trim($level, '.') == $searchKey) ? array_set($object, trim($level, '.'), $value) : array_set($object, trim($level, '.'), array());
+                foreach ($keys as $key) {
+                    $level .= '.' . $key;
+                    (trim($level, '.') == $searchKey) ? array_set($object, trim($level, '.'), $value) : array_set($object, trim($level, '.'), []);
+                }
+            }else{
+                $object = $value;
             }
 
             $this->database->table($this->config['table'])->insert(array('key' => $baseKey, 'value' => json_encode($object)));
